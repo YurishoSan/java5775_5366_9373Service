@@ -3,6 +3,7 @@
 	<name>java5775_5366_9373Service</name>
 	<comment></comment>
 	<projects>
+		<project>java5775_5366_9373</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
