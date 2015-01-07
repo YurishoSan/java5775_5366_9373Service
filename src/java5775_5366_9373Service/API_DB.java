@@ -10,19 +10,18 @@ import java.util.ArrayList;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import model.datasource.SQLNAME;
 import entities.*;
 import entities.enums.*;
-import model.datasource.SQLNAME;
 
 /**
  * @author Yurisho
  *
  */
+@Path("/db/")
 public class API_DB
 {
-	public static final String URL = "jdbc:mysql://www.db4free.net:3306";
+	public static final String URL = "jdbc:mysql://db4free.net:3306";
 	public static final String USER = "yurisho";
 	public static final String PASSWORD = "312345366";
 
@@ -978,7 +977,7 @@ public class API_DB
 
 		return returnString;
 	}
-
+	
 	@Path("/updatePassword")
 	@POST
 	@Produces(MediaType.TEXT_PLAIN)
@@ -1126,7 +1125,7 @@ public class API_DB
 		return returnString;
 	}
 
-	@Path("/updateMedicineAllergy")
+	@Path("/updatePatientAllergy")
 	@POST
 	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -1571,7 +1570,7 @@ public class API_DB
 		return medicineList;
 	}
 	
-	@Path("/getMgetPatientList")
+	@Path("/getPatientList")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public ArrayList<Patient> getPatientList() throws Exception
