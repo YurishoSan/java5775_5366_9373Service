@@ -21,7 +21,7 @@ import entities.enums.*;
 @Path("/db/")
 public class API_DB
 {
-	public static final String URL = "jdbc:mysql://db4free.net:3306";
+	public static final String URL = "jdbc:mysql://db4free.net:3306/java53669373";
 	public static final String USER = "yurisho";
 	public static final String PASSWORD = "312345366";
 
