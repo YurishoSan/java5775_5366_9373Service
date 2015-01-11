@@ -2,9 +2,6 @@
     <wb-module deploy-name="java5775_5366_9373Service">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <dependent-module archiveName="java5775_5366_9373.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/java5775_5366_9373/java5775_5366_9373">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <property name="context-root" value="java5775_5366_9373Service"/>
         <property name="java-output-path" value="/java5775_5366_9373Service/build/classes"/>
     </wb-module>
