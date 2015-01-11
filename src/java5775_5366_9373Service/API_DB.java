@@ -14,6 +14,27 @@ import model.datasource.SQLNAME;
 import entities.*;
 import entities.enums.*;
 
+class updatePasswordArgs
+{
+	public Password oldPassword;
+	public String newPassword;
+	
+	updatePasswordArgs()
+	{
+	}
+}
+
+class updatePasswordPermitArgs
+{
+	public Password oldPassword;
+	public String newPassword;
+	public Permit permit;
+	
+	updatePasswordPermitArgs()
+	{
+	}
+}
+
 /**
  * @author Yurisho
  *
@@ -21,6 +42,8 @@ import entities.enums.*;
 @Path("/db/")
 public class API_DB
 {
+	
+	
 	public static final String URL = "jdbc:mysql://db4free.net:3306/java53669373";
 	public static final String USER = "yurisho";
 	public static final String PASSWORD = "312345366";
@@ -853,19 +876,19 @@ public class API_DB
 							+ " SET " + SQLNAME.KEY_DOCTOR_FIRST_NAME + "='"
 							+ doctor.getDoctorFirstName() + "'" + ","
 							+ SQLNAME.KEY_DOCTOR_LAST_NAME + "='"
-							+ doctor.getDoctorLastName() + "'"
+							+ doctor.getDoctorLastName() + "'" + ","
 							+ SQLNAME.KEY_DOCTOR_GENDER + "='"
-							+ doctor.getDoctorGender().name() + "'"
+							+ doctor.getDoctorGender().name() + "'" + ","
 							+ SQLNAME.KEY_DOCTOR_DOB + "='"
-							+ dateFormat.format(doctor.getDoctorDoB()) + "'"
+							+ dateFormat.format(doctor.getDoctorDoB()) + "'" + ","
 							+ SQLNAME.KEY_DOCTOR_EMAIL_ADDRESS + "='"
-							+ doctor.getDoctorEmailAdress() + "'"
+							+ doctor.getDoctorEmailAdress() + "'" + ","
 							+ SQLNAME.KEY_DOCTOR_DOJ + "='"
-							+ dateFormat.format(doctor.getDoctorDoJ()) + "'"
+							+ dateFormat.format(doctor.getDoctorDoJ()) + "'" + ","
 							+ SQLNAME.KEY_DOCTOR_SALARY + "='"
-							+ doctor.getDoctorSalary() + "'"
+							+ doctor.getDoctorSalary() + "'" + ","
 							+ SQLNAME.KEY_DOCTOR_PHONE_NUMBER + "='"
-							+ doctor.getDoctorPhoneNumber() + "'"
+							+ doctor.getDoctorPhoneNumber() + "'" + ","
 							+ SQLNAME.KEY_DOCTOR_SPECIALIZATION + "='"
 							+ doctor.getDoctorSpecialization().name() + "'"
 							+ " WHERE " + SQLNAME.KEY_DOCTOR_ID + "='"
@@ -904,16 +927,16 @@ public class API_DB
 		{
 
 			conn = getConnection();
-			query = conn.prepareStatement("UPDATE " + SQLNAME.TABLE_ALLERGY
+			query = conn.prepareStatement("UPDATE " + SQLNAME.TABLE_MEDICINE
 					+ " SET " + SQLNAME.KEY_MEDICINE_NAME + "='"
 					+ medicine.getMedicineName() + "'" + ","
 					+ SQLNAME.KEY_MEDICINE_INGREDIENTS + "='"
-					+ medicine.getMedicineIngredients() + "'"
+					+ medicine.getMedicineIngredients() + "'" + ","
 					+ SQLNAME.KEY_MEDICINE_ACTIVE_INGREDIENTS + "='"
-					+ medicine.getMedicineActiveIngredients() + "'"
+					+ medicine.getMedicineActiveIngredients() + "'" + ","
 					+ SQLNAME.KEY_MEDICINE_TYPE + "='"
 					+ medicine.getMedicineType().name() + "'" + " WHERE "
-					+ SQLNAME.KEY_ALLERGY_ID + "='" + medicine.getMedicineID()
+					+ SQLNAME.KEY_MEDICINE_ID + "='" + medicine.getMedicineID()
 					+ "'");
 			query.executeUpdate();
 			query.close();
@@ -982,7 +1005,7 @@ public class API_DB
 	@POST
 	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String updatePassword(Password oldPassword, String newPassword)
+	public String updatePassword(updatePasswordArgs args)
 			throws Exception
 	{
 
@@ -990,8 +1013,8 @@ public class API_DB
 		String returnString = null;
 		Connection conn = null;
 
-		if (checkPassword(oldPassword.getPasswordUserID(),
-				oldPassword.getPasswordWord()) == Permit.DENIED)
+		if (checkPassword(args.oldPassword.getPasswordUserID(),
+				args.oldPassword.getPasswordWord()) == Permit.DENIED)
 			throw new Exception("סיסמה שגויה");
 
 		try
@@ -999,9 +1022,9 @@ public class API_DB
 
 			conn = getConnection();
 			query = conn.prepareStatement("UPDATE " + SQLNAME.TABLE_PASSWORD
-					+ " SET " + SQLNAME.KEY_PASSWORD_WORD + "='" + newPassword
-					+ "'" + "," + " WHERE " + SQLNAME.KEY_PASSWORD_USER_ID
-					+ "='" + oldPassword.getPasswordUserID() + "'");
+					+ " SET " + SQLNAME.KEY_PASSWORD_WORD + "='" + args.newPassword
+					+ "'" + " WHERE " + SQLNAME.KEY_PASSWORD_USER_ID
+					+ "='" + args.oldPassword.getPasswordUserID() + "'");
 			query.executeUpdate();
 			query.close();
 			returnString = "success";
@@ -1025,36 +1048,35 @@ public class API_DB
 	@POST
 	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String updatePassword(Password oldPassword, String newPassword,
-			Permit permit) throws Exception
+	public String updatePassword(updatePasswordPermitArgs args) throws Exception
 	{
 
 		PreparedStatement query = null;
 		String returnString = null;
 		Connection conn = null;
 
-		if (checkPassword(oldPassword.getPasswordUserID(),
-				oldPassword.getPasswordWord()) == Permit.DENIED)
+		if (checkPassword(args.oldPassword.getPasswordUserID(),
+				args.oldPassword.getPasswordWord()) == Permit.DENIED)
 			throw new Exception("סיסמה שגויה");
 
 		try
 		{
 
 			conn = getConnection();
-			if (oldPassword.getPasswordPermit() == Permit.ADMIN || // do not
+			if (args.oldPassword.getPasswordPermit() == Permit.ADMIN || // do not
 																	// allow
 																	// change to
 																	// admin's
 																	// premision.
-					permit == Permit.ADMIN) // do not allow other users to turn
+					args.permit == Permit.ADMIN) // do not allow other users to turn
 											// admins.
 				throw new Exception("שינוי הרשאות (ל)אדמין אסור.");
 			query = conn.prepareStatement("UPDATE " + SQLNAME.TABLE_PASSWORD
-					+ " SET " + SQLNAME.KEY_PASSWORD_WORD + "='" + newPassword
+					+ " SET " + SQLNAME.KEY_PASSWORD_WORD + "='" + args.newPassword
 					+ "'" + "," + SQLNAME.KEY_PASSWORD_PERMIT + "='"
-					+ permit.name() + "'" + " WHERE "
+					+ args.permit.name() + "'" + " WHERE "
 					+ SQLNAME.KEY_PASSWORD_USER_ID + "='"
-					+ oldPassword.getPasswordUserID() + "'");
+					+ args.oldPassword.getPasswordUserID() + "'");
 			query.executeUpdate();
 			query.close();
 			returnString = "success";
@@ -1093,15 +1115,15 @@ public class API_DB
 					+ " SET " + SQLNAME.KEY_PATIENT_FIRST_NAME + "='"
 					+ patient.getPatientFirstName() + "'" + ","
 					+ SQLNAME.KEY_PATIENT_LAST_NAME + "='"
-					+ patient.getPatientLastName() + "'"
+					+ patient.getPatientLastName() + "'" + ","
 					+ SQLNAME.KEY_PATIENT_GENDER + "='"
-					+ patient.getPatientGender().name() + "'"
+					+ patient.getPatientGender().name() + "'" + ","
 					+ SQLNAME.KEY_PATIENT_DOB + "='"
-					+ dateFormat.format(patient.getPatientDoB()) + "'"
+					+ dateFormat.format(patient.getPatientDoB()) + "'" + ","
 					+ SQLNAME.KEY_PATIENT_EMAIL_ADDRESS + "='"
-					+ patient.getPatientEmailAdress() + "'"
+					+ patient.getPatientEmailAdress() + "'" + ","
 					+ SQLNAME.KEY_PATIENT_SERVICE_CLASS + "='"
-					+ patient.getPatientServiceClass().name() + "'"
+					+ patient.getPatientServiceClass().name() + "'" + ","
 					+ SQLNAME.KEY_PATIENT_PHONE_NUMBER + "='"
 					+ patient.getPatientPhoneNumber() + "'" + " WHERE "
 					+ SQLNAME.KEY_PATIENT_ID + "='" + patient.getPatientID()
@@ -1139,20 +1161,23 @@ public class API_DB
 
 		try
 		{
-
+			/*
 			conn = getConnection();
 			query = conn.prepareStatement("UPDATE "
 					+ SQLNAME.TABLE_MEDICINE_ALLERGY
 					// add updated attributes here, if any
-					// + " SET " + SQLNAME.KEY + "='" + medicineAllergy.get() +
-					// "'" + ","
+					 + " SET " + SQLNAME.KEY + "='" + medicineAllergy.get() +
+					 "'" + ","
 					+ " WHERE " + SQLNAME.KEY_PATIENT_ALLERGY_PATIENT_ID + "='"
 					+ patientAllergy.getPatientID() + "'" + " AND "
 					+ SQLNAME.KEY_PATIENT_ALLERGY_ALLERGY_ID + "='"
-					+ patientAllergy.getAllergyID() + "'");
+					+ patientAllergy.getAllergyID() + "'"
+					);
 			query.executeUpdate();
 			query.close();
 			returnString = "success";
+			*/
+			returnString = "no fields to update, unused function";
 		}
 		catch (Exception e)
 		{
@@ -1183,7 +1208,7 @@ public class API_DB
 
 		try
 		{
-
+			/*
 			conn = getConnection();
 			query = conn.prepareStatement("UPDATE "
 					+ SQLNAME.TABLE_PRESCRIPTION
@@ -1197,6 +1222,8 @@ public class API_DB
 			query.executeUpdate();
 			query.close();
 			returnString = "success";
+			*/
+			returnString = "no fields to update, unused function";
 		}
 		catch (Exception e)
 		{
@@ -1232,13 +1259,13 @@ public class API_DB
 					+ " SET " + SQLNAME.KEY_TREATMENT_DOCTOR_ID + "='"
 					+ treatment.getTreatmentDoctorID() + "'" + ","
 					+ SQLNAME.KEY_TREATMENT_PATIENT_ID + "='"
-					+ treatment.getTreatmentPatientID() + "'"
+					+ treatment.getTreatmentPatientID() + "'" + ","
 					+ SQLNAME.KEY_TREATMENT_DATE + "='"
-					+ dateFormat.format(treatment.getTreatmentDate()) + "'"
+					+ dateFormat.format(treatment.getTreatmentDate()) + "'" + ","
 					+ SQLNAME.KEY_TREATMENT_LOCATION + "='"
-					+ treatment.getTreatmentLocation() + "'"
+					+ treatment.getTreatmentLocation() + "'" + ","
 					+ SQLNAME.KEY_TREATMENT_SUMMARY + "='"
-					+ treatment.getTreatmentSummary() + "'"
+					+ treatment.getTreatmentSummary() + "'" + ","
 					+ SQLNAME.KEY_TREATMENT_DONE + "='"
 					+ ((treatment.isTreatmentDone()) ? 1 : 0) + "'" + " WHERE "
 					+ SQLNAME.KEY_TREATMENT_ID + "='"
@@ -1536,7 +1563,7 @@ public class API_DB
 					+ treatmentID + "'" + " AND tMedicine."
 					+ SQLNAME.KEY_MEDICINE_ID + " = " + "tPrescription."
 					+ SQLNAME.KEY_PRESCRIPTION_MEDICINE_ID + " AND tTreatment."
-					+ SQLNAME.KEY_TREATMENT_ID + " = " + "tPresrcription."
+					+ SQLNAME.KEY_TREATMENT_ID + " = " + "tPrescription."
 					+ SQLNAME.KEY_PRESCRIPTION_TREATMENT_ID);
 			ResultSet rs = query.executeQuery();
 
@@ -1684,7 +1711,7 @@ public class API_DB
 	@GET 
 	@Produces(MediaType.APPLICATION_JSON) 
 	public Prescription getConectorPrescription(@QueryParam("treatmentID") long treatmentID,
-			@QueryParam("medicneID") long medicineID) throws Exception
+			@QueryParam("medicineID") long medicineID) throws Exception
 	{
 		ArrayList<Prescription> prescriptions = getPrescriptionList();
 
@@ -1708,7 +1735,7 @@ public class API_DB
 
 			conn = getConnection();
 			query = conn.prepareStatement("SELECT  * FROM "
-					+ SQLNAME.TABLE_MEDICINE_ALLERGY);
+					+ SQLNAME.TABLE_PRESCRIPTION);
 			ResultSet rs = query.executeQuery();
 
 			while (rs.next())
@@ -1767,7 +1794,7 @@ public class API_DB
 
 			conn = getConnection();
 			query = conn.prepareStatement("SELECT  * FROM "
-					+ SQLNAME.TABLE_MEDICINE_ALLERGY);
+					+ SQLNAME.TABLE_PASSWORD);
 			ResultSet rs = query.executeQuery();
 
 			while (rs.next())
@@ -1807,9 +1834,9 @@ public class API_DB
 		Connection conn = null;
 		
 		conn = getConnection();
-		query = conn.prepareStatement("SELECT  * FROM " + SQLNAME.TABLE_DOCTOR);
+		query = conn.prepareStatement("SELECT * FROM " + SQLNAME.TABLE_DOCTOR);
 		ResultSet rs = query.executeQuery();
 		
-		return rs.next();
+		return !rs.next();
 	}
 }
