@@ -10,30 +10,10 @@ import java.util.ArrayList;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import model.datasource.SQLNAME;
+//import model.datasource.SQLNAME;
 import entities.*;
 import entities.enums.*;
-
-class updatePasswordArgs
-{
-	public Password oldPassword;
-	public String newPassword;
-	
-	updatePasswordArgs()
-	{
-	}
-}
-
-class updatePasswordPermitArgs
-{
-	public Password oldPassword;
-	public String newPassword;
-	public Permit permit;
-	
-	updatePasswordPermitArgs()
-	{
-	}
-}
+import entities.json.*;
 
 /**
  * @author Yurisho
@@ -1005,7 +985,7 @@ public class API_DB
 	@POST
 	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String updatePassword(updatePasswordArgs args)
+	public String updatePassword(UpdatePasswordArgs args)
 			throws Exception
 	{
 
@@ -1048,7 +1028,7 @@ public class API_DB
 	@POST
 	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String updatePassword(updatePasswordPermitArgs args) throws Exception
+	public String updatePassword(UpdatePasswordPermitArgs args) throws Exception
 	{
 
 		PreparedStatement query = null;
@@ -1155,6 +1135,7 @@ public class API_DB
 			throws Exception
 	{
 
+		@SuppressWarnings("unused")
 		PreparedStatement query = null;
 		String returnString = null;
 		Connection conn = null;
@@ -1202,6 +1183,7 @@ public class API_DB
 			throws Exception
 	{
 
+		@SuppressWarnings("unused")
 		PreparedStatement query = null;
 		String returnString = null;
 		Connection conn = null;
