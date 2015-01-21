@@ -1370,10 +1370,10 @@ public class API_DB
 		return allergyList;
 	}
 	
-	@Path("/getAllergyBMedicineList")
+	@Path("/getAllergyByMedicineList")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public ArrayList<Allergy> getAllergyBMedicineList(@QueryParam("medicineID") long medicineID) throws Exception
+	public ArrayList<Allergy> getAllergyByMedicineList(@QueryParam("medicineID") long medicineID) throws Exception
 	{
 
 		ArrayList<Allergy> allergyList = new ArrayList<Allergy>();
