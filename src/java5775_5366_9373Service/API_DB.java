@@ -358,8 +358,8 @@ public class API_DB
 	public static String addTreatment(Treatment treatment) throws Exception
 	{
 		PreparedStatement query = null;
-		String returnString = null;
 		Connection conn = null;
+		String returnString = null;
 
 		try
 		{
@@ -372,9 +372,15 @@ public class API_DB
 					+ dateFormat.format(treatment.getTreatmentDate()) + "', '"
 					+ treatment.getTreatmentLocation() + "', '"
 					+ treatment.getTreatmentSummary() + "', '"
-					+ ((treatment.isTreatmentDone()) ? 1 : 0) + "')");
+					+ ((treatment.isTreatmentDone()) ? 1 : 0) + "')",
+					Statement.RETURN_GENERATED_KEYS);
 			query.executeUpdate();
-			returnString = "success";
+			ResultSet rs = query.getGeneratedKeys();
+			
+			rs.next();
+			
+			returnString = Long.toString(rs.getLong(1));
+			
 			query.close();
 		}
 		catch (Exception e)
